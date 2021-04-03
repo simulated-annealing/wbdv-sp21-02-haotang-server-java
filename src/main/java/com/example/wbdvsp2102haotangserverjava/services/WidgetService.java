@@ -1,48 +1,68 @@
 package com.example.wbdvsp2102haotangserverjava.services;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.Optional;
 
 import com.example.wbdvsp2102haotangserverjava.models.Widget;
+import com.example.wbdvsp2102haotangserverjava.repositories.WidgetRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+
+import lombok.NonNull;
 
 
 @Service
 public class WidgetService {
 
-    private List<Widget> widgets = new ArrayList<Widget>();
+    @Autowired
+    private WidgetRepository widgetRepository;
 
+    @Nullable
     public Widget createWidget(String tid, Widget w) {
-        w.setId(UUID.randomUUID().toString());
         w.setTopicId(tid);
-        widgets.add(w);
-        return w;
+        return widgetRepository.save(w);
     }
 
+    @NonNull
     public List<Widget> findWidgetsForTopic(String tid) {
-        return widgets.stream().filter(w -> tid.equals(w.getTopicId())).collect(Collectors.toList());
+        return widgetRepository.findWidgetsForTopic(tid);
     }
 
-    public int updateWidget(String wid, Widget w) {
-        int idx = IntStream.range(0, widgets.size()).filter(i -> wid.equals(widgets.get(i).getId())).findAny().orElse(-1);
-        if (idx >= 0) widgets.set(idx, w);
+    public int updateWidget(Long wid, Widget w) {
+        Widget ow = findWidgetById(wid);
+        if (ow == null) return -1;
+
+        ow.setOrdered(w.getOrdered());
+        ow.setHeight(w.getHeight());
+        ow.setWidth(w.getWidth());
+        ow.setName(w.getName());
+        ow.setSize(w.getSize());
+        ow.setText(w.getText());
+        ow.setTopicId(w.getTopicId());
+        ow.setType(w.getType());
+        ow.setUrl(w.getUrl());
+        ow.setValue(w.getValue());
+        ow.setWidgetOrder(w.getWidgetOrder());
+
+        widgetRepository.save(ow);
         return 0;
     }
 
-    public int deleteWidget(String wid) {
-        widgets.removeIf(w -> wid.equals(w.getId()));
+    public int deleteWidget(Long wid) {
+        widgetRepository.deleteById(wid);
         return 0;
     }
 
+    @NonNull
     public List<Widget> findAllWidgets() {
-        return widgets;
+        return (List<Widget>) widgetRepository.findAll();
     }
 
-    public Widget findWidgetById(String wid) {
-        return widgets.stream().filter(w -> wid.equals(w.getId())).findFirst().orElse(null);
+    @Nullable
+    public Widget findWidgetById(Long wid) {
+        Optional<Widget> wrapper = widgetRepository.findById(wid);
+        return wrapper.isPresent() ? wrapper.get() : null;
     }
 }

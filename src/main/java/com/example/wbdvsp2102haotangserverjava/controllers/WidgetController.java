@@ -23,7 +23,7 @@ public class WidgetController {
     WidgetService widgetService;
 
     @PostMapping("/api/topics/{tid}/widgets")
-    Widget createWidget (@PathVariable("tid") String tid, @RequestBody Widget widget) {
+    Widget createWidget(@PathVariable("tid") String tid, @RequestBody Widget widget) {
         return widgetService.createWidget(tid, widget);
     }
 
@@ -33,12 +33,12 @@ public class WidgetController {
     }
 
     @PutMapping("/api/widgets/{wid}") 
-    int updateWidget(@PathVariable("wid") String wid, @RequestBody Widget widget) {
+    int updateWidget(@PathVariable("wid") Long wid, @RequestBody Widget widget) {
         return widgetService.updateWidget(wid, widget);
     }
 
     @DeleteMapping("/api/widgets/{wid}")
-    int deleteWidget(@PathVariable("wid") String wid) {
+    int deleteWidget(@PathVariable("wid") Long wid) {
         return widgetService.deleteWidget(wid);
     }
 
@@ -48,7 +48,7 @@ public class WidgetController {
     }
 
     @GetMapping("/api/widgets/{wid}") 
-    Widget findWidgetById(String wid) {
+    Widget findWidgetById(@PathVariable("wid") Long wid) {
         return widgetService.findWidgetById(wid);
     }
 }
